@@ -1,0 +1,165 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.gameCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform $transition-normal, box-shadow $transition-normal;
+  border: 1px solid $color-border;
+
+  // Custom property for dynamic border color
+  &:hover {
+    @include card-hover-glow(var(--border-color, #{$color-accent-purple}));
+  }
+}
+
+// Compact variant - used in lobby rows
+.compact {
+  width: $card-width-mobile;
+  flex-shrink: 0;
+
+  @include respond-to(md) {
+    width: $card-width-tablet;
+  }
+
+  @include respond-to(lg) {
+    width: $card-width-desktop;
+  }
+
+  .title {
+    @include text-truncate(1);
+  }
+}
+
+// Full variant - used in grid view
+.full {
+  width: 100%;
+
+  .title {
+    @include text-truncate(2);
+  }
+}
+
+// Image wrapper with fixed aspect ratio
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: $card-aspect-ratio;
+  background-color: $color-bg-surface;
+}
+
+.image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+// Top badges container
+.badgesTop {
+  position: absolute;
+  top: $space-sm;
+  left: $space-sm;
+  right: $space-sm;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: $z-card-hover;
+  gap: $space-xs;
+}
+
+// FUN mode badge
+.funBadge {
+  background-color: $color-accent-gold;
+  color: $color-bg-primary;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: $radius-sm;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Favorite button
+.favoriteButton {
+  @include tap-target;
+  background: rgba($color-bg-primary, 0.7);
+  backdrop-filter: blur(4px);
+  border-radius: $radius-full;
+  padding: $space-xs;
+  transition: transform $transition-fast, background-color $transition-fast;
+  font-size: 16px;
+  line-height: 1;
+  margin-left: auto;
+
+  &:hover {
+    transform: scale(1.1);
+    background: rgba($color-bg-primary, 0.85);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.active {
+    background: rgba($color-accent-gold, 0.2);
+  }
+}
+
+// Game info section
+.info {
+  padding: $space-sm;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  flex: 1;
+}
+
+.title {
+  color: $color-text-primary;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0;
+
+  @include respond-to(md) {
+    font-size: 15px;
+  }
+}
+
+// Metadata row (full variant only)
+.metadata {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  font-size: 11px;
+
+  @include respond-to(md) {
+    font-size: 12px;
+  }
+}
+
+.vendor {
+  color: $color-text-secondary;
+  font-weight: 500;
+  @include text-truncate(1);
+  flex: 1;
+}
+
+.rtpBadge {
+  color: $color-success;
+  background: rgba($color-success, 0.1);
+  padding: 2px 6px;
+  border-radius: $radius-sm;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 10px;
+
+  @include respond-to(md) {
+    font-size: 11px;
+  }
+}

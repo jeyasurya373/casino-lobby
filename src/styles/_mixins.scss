@@ -1,0 +1,115 @@
+@use './variables' as *;
+
+/**
+ * Mobile-first responsive breakpoint mixin
+ * 
+ * @param {string} $bp - Breakpoint size (sm, md, lg, xl)
+ */
+@mixin respond-to($bp) {
+  @if $bp == sm {
+    @media (min-width: $bp-sm) {
+      @content;
+    }
+  } @else if $bp == md {
+    @media (min-width: $bp-md) {
+      @content;
+    }
+  } @else if $bp == lg {
+    @media (min-width: $bp-lg) {
+      @content;
+    }
+  } @else if $bp == xl {
+    @media (min-width: $bp-xl) {
+      @content;
+    }
+  }
+}
+
+/**
+ * Horizontal scrolling row with hidden scrollbar and scroll snap
+ */
+@mixin horizontal-scroll-row {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/**
+ * Accessible tap target with minimum 44x44px size
+ */
+@mixin tap-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/**
+ * Card hover effect with scale and glow
+ * 
+ * @param {color} $color - Glow color
+ */
+@mixin card-hover-glow($color) {
+  transform: scale(1.04);
+  box-shadow: 0 8px 24px rgba($color, 0.3),
+              0 0 20px rgba($color, 0.2);
+}
+
+/**
+ * Text truncation with line clamping
+ * 
+ * @param {number} $lines - Number of lines to show (default: 1)
+ */
+@mixin text-truncate($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/**
+ * Frosted glass effect for overlays
+ */
+@mixin glass-effect {
+  background: rgba($color-bg-surface, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/**
+ * Skeleton loading pulse animation
+ */
+@mixin skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    $color-bg-card 0%,
+    $color-bg-surface 50%,
+    $color-bg-card 100%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

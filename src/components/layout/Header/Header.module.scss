@@ -1,0 +1,118 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+  background-color: $color-bg-primary;
+  border-bottom: 1px solid $color-border;
+  width: 100%;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-md;
+  gap: $space-md;
+
+  @include respond-to(md) {
+    padding: $space-md $space-lg;
+  }
+}
+
+// Logo
+.logo {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  font-weight: 700;
+  font-size: 16px;
+  color: $color-text-primary;
+  white-space: nowrap;
+
+  @include respond-to(md) {
+    font-size: 20px;
+  }
+}
+
+.logoIcon {
+  font-size: 24px;
+  line-height: 1;
+
+  @include respond-to(md) {
+    font-size: 28px;
+  }
+}
+
+.logoText {
+  letter-spacing: 1px;
+}
+
+// Search Bar
+.searchDesktop {
+  display: none;
+
+  @include respond-to(md) {
+    display: block;
+    flex: 1;
+    max-width: 500px;
+  }
+}
+
+.searchMobile {
+  padding: 0 $space-md $space-md;
+
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+// Auth Buttons
+.authButtons {
+  display: flex;
+  gap: $space-sm;
+  align-items: center;
+}
+
+.loginButton {
+  padding: $space-xs $space-md;
+  color: $color-text-primary;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-accent-gold;
+  }
+
+  @include respond-to(md) {
+    padding: $space-sm $space-lg;
+    font-size: 15px;
+  }
+}
+
+.registerButton {
+  padding: $space-xs $space-md;
+  background-color: $color-accent-gold;
+  color: $color-bg-primary;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: $radius-md;
+  transition: background-color $transition-fast, transform $transition-fast;
+
+  &:hover {
+    background-color: lighten($color-accent-gold, 10%);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @include respond-to(md) {
+    padding: $space-sm $space-lg;
+    font-size: 15px;
+  }
+}

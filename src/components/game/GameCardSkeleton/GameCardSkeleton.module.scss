@@ -1,0 +1,58 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.skeleton {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  border: 1px solid $color-border;
+}
+
+// Compact variant - matches GameCard compact
+.compact {
+  width: $card-width-mobile;
+  flex-shrink: 0;
+
+  @include respond-to(md) {
+    width: $card-width-tablet;
+  }
+
+  @include respond-to(lg) {
+    width: $card-width-desktop;
+  }
+}
+
+// Full variant - matches GameCard full
+.full {
+  width: 100%;
+}
+
+.imageArea {
+  width: 100%;
+  aspect-ratio: $card-aspect-ratio;
+  @include skeleton-pulse;
+}
+
+.infoArea {
+  padding: $space-sm;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+}
+
+.titleLine {
+  height: 16px;
+  width: 80%;
+  border-radius: $radius-sm;
+  @include skeleton-pulse;
+}
+
+.metadataLine {
+  height: 12px;
+  width: 60%;
+  border-radius: $radius-sm;
+  @include skeleton-pulse;
+}

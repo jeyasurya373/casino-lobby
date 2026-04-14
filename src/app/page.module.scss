@@ -1,0 +1,35 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-primary;
+}
+
+.lobby {
+  padding-bottom: $space-2xl;
+}
+
+.gridView {
+  display: flex;
+  gap: $space-lg;
+  padding: $space-lg;
+
+  @include respond-to(lg) {
+    padding: $space-xl;
+  }
+}
+
+.sidebar {
+  display: none;
+
+  @include respond-to(md) {
+    display: block;
+    flex-shrink: 0;
+  }
+}
+
+.gridContent {
+  flex: 1;
+  min-width: 0;
+}

@@ -1,0 +1,142 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.heroBanner {
+  position: relative;
+  margin: $space-lg $space-md;
+  padding: $space-xl $space-lg;
+  background: linear-gradient(
+    135deg,
+    $color-bg-surface 0%,
+    $color-bg-elevated 50%,
+    $color-bg-surface 100%
+  );
+  border-radius: $radius-xl;
+  overflow: hidden;
+  border: 1px solid $color-border;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @include respond-to(md) {
+    margin: $space-xl $space-lg;
+    padding: $space-2xl $space-xl;
+    min-height: 280px;
+  }
+
+  @include respond-to(lg) {
+    margin: $space-xl;
+    min-height: 320px;
+  }
+}
+
+.gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba($color-accent-purple, 0.1) 0%,
+    transparent 50%,
+    rgba($color-accent-gold, 0.1) 100%
+  );
+  animation: gradientShift 8s ease infinite;
+  pointer-events: none;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateX(-10%);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateX(10%);
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 600px;
+}
+
+.label {
+  display: inline-block;
+  padding: $space-xs $space-md;
+  background-color: rgba($color-accent-gold, 0.2);
+  border: 1px solid rgba($color-accent-gold, 0.3);
+  border-radius: $radius-full;
+  color: $color-accent-gold;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: $space-md;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 900;
+  background: linear-gradient(
+    135deg,
+    $color-accent-gold 0%,
+    lighten($color-accent-gold, 20%) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 $space-md;
+  line-height: 1.2;
+
+  @include respond-to(md) {
+    font-size: 48px;
+  }
+
+  @include respond-to(lg) {
+    font-size: 56px;
+  }
+}
+
+.subtitle {
+  color: $color-text-secondary;
+  font-size: 14px;
+  margin: 0 0 $space-lg;
+  line-height: 1.6;
+
+  @include respond-to(md) {
+    font-size: 16px;
+  }
+}
+
+.ctaButton {
+  @include tap-target;
+  padding: $space-md $space-xl;
+  background-color: $color-accent-gold;
+  color: $color-bg-primary;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: $radius-full;
+  transition: all $transition-fast;
+  box-shadow: 0 4px 12px rgba($color-accent-gold, 0.3);
+
+  &:hover {
+    background-color: lighten($color-accent-gold, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($color-accent-gold, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @include respond-to(md) {
+    padding: $space-md $space-2xl;
+    font-size: 16px;
+  }
+}

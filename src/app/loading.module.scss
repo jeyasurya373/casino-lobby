@@ -1,0 +1,119 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.loading {
+  min-height: 100vh;
+  background-color: $color-bg-primary;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-md;
+  border-bottom: 1px solid $color-border;
+  gap: $space-md;
+
+  @include respond-to(md) {
+    padding: $space-md $space-lg;
+  }
+}
+
+.logo {
+  width: 120px;
+  height: 32px;
+  @include skeleton-pulse;
+  border-radius: $radius-md;
+}
+
+.searchBar {
+  display: none;
+
+  @include respond-to(md) {
+    display: block;
+    flex: 1;
+    max-width: 400px;
+    height: 48px;
+    @include skeleton-pulse;
+    border-radius: $radius-full;
+  }
+}
+
+.authButtons {
+  display: flex;
+  gap: $space-sm;
+}
+
+.button {
+  width: 80px;
+  height: 36px;
+  @include skeleton-pulse;
+  border-radius: $radius-md;
+}
+
+.categoryNav {
+  display: flex;
+  gap: $space-sm;
+  padding: $space-md;
+  border-bottom: 1px solid $color-border;
+  overflow-x: auto;
+
+  @include respond-to(md) {
+    justify-content: center;
+  }
+}
+
+.categoryTab {
+  width: 120px;
+  height: 40px;
+  flex-shrink: 0;
+  @include skeleton-pulse;
+  border-radius: $radius-full;
+}
+
+.heroBanner {
+  margin: $space-lg $space-md;
+  height: 200px;
+  @include skeleton-pulse;
+  border-radius: $radius-xl;
+
+  @include respond-to(md) {
+    margin: $space-xl $space-lg;
+    height: 280px;
+  }
+
+  @include respond-to(lg) {
+    margin: $space-xl;
+    height: 320px;
+  }
+}
+
+.gameRows {
+  padding: 0;
+}
+
+.gameRow {
+  margin-bottom: $space-xl;
+}
+
+.rowTitle {
+  width: 200px;
+  height: 28px;
+  margin: 0 $space-md $space-md;
+  @include skeleton-pulse;
+  border-radius: $radius-md;
+
+  @include respond-to(md) {
+    margin: 0 $space-lg $space-md;
+  }
+}
+
+.cards {
+  display: flex;
+  gap: $space-sm;
+  padding: 0 $space-md;
+
+  @include respond-to(md) {
+    padding: 0 $space-lg;
+  }
+}

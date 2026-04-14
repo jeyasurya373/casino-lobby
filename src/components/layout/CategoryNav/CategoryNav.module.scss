@@ -1,0 +1,56 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.categoryNav {
+  background-color: $color-bg-card;
+  border-bottom: 1px solid $color-border;
+  padding: $space-sm 0;
+
+  @include respond-to(md) {
+    padding: $space-md 0;
+  }
+}
+
+.scrollContainer {
+  @include horizontal-scroll-row;
+  gap: $space-sm;
+  padding: 0 $space-md;
+
+  @include respond-to(md) {
+    padding: 0 $space-lg;
+    justify-content: center;
+  }
+
+  @include respond-to(lg) {
+    flex-wrap: wrap;
+  }
+}
+
+.tab {
+  padding: $space-sm $space-lg;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: $radius-full;
+  color: $color-text-secondary;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all $transition-fast;
+  flex-shrink: 0;
+
+  &:hover {
+    color: $color-text-primary;
+    background-color: rgba($color-accent-gold, 0.1);
+    border-color: rgba($color-accent-gold, 0.3);
+  }
+
+  &.active {
+    background-color: $color-accent-gold;
+    color: $color-bg-primary;
+    border-color: $color-accent-gold;
+  }
+
+  @include respond-to(md) {
+    font-size: 15px;
+  }
+}

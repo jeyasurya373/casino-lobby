@@ -1,0 +1,76 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.providerRow {
+  margin-bottom: $space-xl;
+  padding: 0;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin: 0 0 $space-md;
+  padding: 0 $space-md;
+
+  @include respond-to(md) {
+    font-size: 24px;
+    padding: 0 $space-lg;
+  }
+}
+
+.providersContainer {
+  @include horizontal-scroll-row;
+  gap: $space-md;
+  padding: 0 $space-md;
+
+  @include respond-to(md) {
+    padding: 0 $space-lg;
+  }
+}
+
+.providerCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  width: 140px;
+  height: 120px;
+  background-color: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  flex-shrink: 0;
+  transition: all $transition-normal;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: $color-accent-gold;
+    box-shadow: 0 8px 24px rgba($color-accent-gold, 0.2);
+  }
+
+  @include respond-to(md) {
+    width: 160px;
+    height: 140px;
+  }
+}
+
+.logo {
+  font-size: 32px;
+  line-height: 1;
+
+  @include respond-to(md) {
+    font-size: 40px;
+  }
+}
+
+.name {
+  color: $color-text-primary;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+
+  @include respond-to(md) {
+    font-size: 14px;
+  }
+}

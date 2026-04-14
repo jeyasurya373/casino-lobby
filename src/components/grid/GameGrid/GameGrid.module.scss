@@ -1,0 +1,68 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.gridContainer {
+  padding: $space-md;
+  width: 100%;
+
+  @include respond-to(md) {
+    padding: $space-lg;
+  }
+
+  @include respond-to(lg) {
+    padding: $space-xl;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: $space-md;
+  width: 100%;
+
+  // Responsive grid columns
+  // Mobile: 2 columns
+  grid-template-columns: repeat(2, 1fr);
+
+  // Tablet: 3 columns
+  @include respond-to(md) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-lg;
+  }
+
+  // Desktop: 4 columns
+  @include respond-to(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // XL: 5 columns
+  @include respond-to(xl) {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+// Infinite scroll sentinel
+.sentinel {
+  height: 1px;
+  width: 100%;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+// End of results message
+.endMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $space-xl;
+  margin-top: $space-lg;
+
+  p {
+    color: $color-text-muted;
+    font-size: 14px;
+    margin: 0;
+
+    @include respond-to(md) {
+      font-size: 15px;
+    }
+  }
+}

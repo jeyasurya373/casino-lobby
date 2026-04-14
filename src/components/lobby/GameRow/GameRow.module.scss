@@ -1,0 +1,100 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.gameRow {
+  margin-bottom: $space-xl;
+}
+
+// Section header
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-md;
+  padding: 0 $space-md;
+
+  @include respond-to(md) {
+    padding: 0 $space-lg;
+  }
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  font-size: 20px;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin: 0;
+
+  @include respond-to(md) {
+    font-size: 24px;
+  }
+}
+
+.icon {
+  font-size: 24px;
+  line-height: 1;
+
+  @include respond-to(md) {
+    font-size: 28px;
+  }
+}
+
+.viewAllButton {
+  color: $color-accent-gold;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color $transition-fast, transform $transition-fast;
+  padding: $space-xs $space-sm;
+  border-radius: $radius-md;
+
+  &:hover {
+    color: lighten($color-accent-gold, 10%);
+    transform: translateX(2px);
+  }
+
+  &:active {
+    transform: translateX(0);
+  }
+
+  @include respond-to(md) {
+    font-size: 15px;
+  }
+}
+
+// Horizontal scrolling cards container
+.cardsContainer {
+  @include horizontal-scroll-row;
+  gap: $space-sm;
+  padding: 0 $space-md;
+  scroll-padding: $space-md;
+
+  // Mobile: Show 2.5 cards for peek effect
+  // 2.5 cards * 130px + 2 gaps * 8px = 341px
+  max-width: calc((#{$card-width-mobile} * 2.5) + (#{$space-sm} * 2));
+
+  @include respond-to(md) {
+    padding: 0 $space-lg;
+    scroll-padding: $space-lg;
+    // Tablet: Show 4 cards
+    // 4 cards * 150px + 3 gaps * 8px = 624px
+    max-width: calc((#{$card-width-tablet} * 4) + (#{$space-sm} * 3));
+  }
+
+  @include respond-to(lg) {
+    // Desktop: Show 6 cards
+    // 6 cards * 170px + 5 gaps * 8px = 1060px
+    max-width: calc((#{$card-width-desktop} * 6) + (#{$space-sm} * 5));
+  }
+
+  @include respond-to(xl) {
+    // Large desktop: Show all cards if possible
+    max-width: 100%;
+  }
+
+  // Snap to cards when scrolling
+  > * {
+    scroll-snap-align: start;
+  }
+}
