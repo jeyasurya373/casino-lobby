@@ -21,9 +21,10 @@ export class ApiError extends Error {
 
 /**
  * Axios instance configured for the casino games API
+ * Uses Next.js API routes as proxy to avoid CORS issues
  */
 const apiClient: AxiosInstance = axios.create({
-  baseURL: "https://jpapi-staging.jackpot.bet",
+  baseURL: "/api",
   timeout: 10000,
 });
 
@@ -95,7 +96,7 @@ export async function fetchGames(params: GamesApiParams): Promise<{
     }
 
     const response = await apiClient.get<GamesApiResponse>(
-      `/casino/games?${queryParams.toString()}`,
+      `/games?${queryParams.toString()}`,
     );
 
     if (!response.data.success) {
@@ -135,7 +136,7 @@ export async function fetchGameSearch(query: string): Promise<Game[]> {
 
   try {
     const response = await apiClient.get<GameSearchApiResponse>(
-      `/casino/games/search`,
+      `/games/search`,
       {
         params: { query },
       },
