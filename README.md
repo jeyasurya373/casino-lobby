@@ -140,16 +140,6 @@ Covered the main stuff:
 
 Yeah, could've tested more (hooks, SearchBar) but ran out of time. Focused on the core state stuff first.
 
-## What's Missing
-
-If I had another day:
-
-- Vendor/provider filters (checkboxes on the side)
-- Sort options (RTP, popularity, name)
-- Favorites page
-- More tests
-- Better loading animations
-
 ## Tricky Parts
 
 **Debounced search + URL:** Almost got into an infinite loop mess. Had to make sure the setTimeout cleanup ran properly when component unmounts or value changes.
