@@ -1,212 +1,197 @@
-# Casino Game Lobby
+# Casino Lobby - Interview Challenge
 
-A modern casino game lobby built with Next.js 14, featuring real-time search, category filtering, and infinite scroll pagination. The entire application is driven by URL parameters, making it easy to bookmark and share specific views.
-
-## Features
-
-- 🎰 **Three View Modes**: Lobby with game rows, category grid, and search results
-- 🔍 **Real-time Search**: Debounced search (300ms) that updates the URL
-- ♾️ **Infinite Scroll**: Smooth loading as you scroll down category grids
-- 🎨 **Dark Casino Theme**: A sleek dark design with purple and gold accents
-- 📱 **Mobile-First**: Fully responsive from 375px mobile to desktop
-- ⭐ **Persistent Favorites**: Save your favorite games to localStorage
-- 🖼️ **Optimized Images**: Next.js Image with blur placeholders for smooth loading
-- ⚡ **Smart Caching**: React Query prevents unnecessary API calls
-- 🧪 **Tested**: Unit tests for core functionality
+Hey! This is what I built for the Next.js frontend challenge. It's a casino game browser where you can search games, filter by category, and scroll through results.
 
 ## Quick Start
 
 ```bash
-# Install dependencies
 yarn install
-
-# Run development server
 yarn dev
+# Open http://localhost:3000
+```
 
-# Build for production
-yarn build
+Tests:
 
-# Run tests
+```bash
 yarn test
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to see the app.
+## What You'll See
 
-## How It Works
+Three different views depending on the URL:
 
-The app uses **URL parameters** as the single source of truth for navigation:
+- `/` - Main lobby with game rows (slots, table games, etc)
+- `/?category=slots` - Grid of all slot games with infinite scroll
+- `/?search=jack` - Search results
 
-- **`/`** — Shows the main lobby with horizontal game rows
-- **`/?category=slots`** — Displays a full grid of slot games with infinite scroll
-- **`/?search=blackjack`** — Shows search results in a grid layout
-- **`/?search=poker&category=slots`** — Combines search with category filter
+The whole thing is URL-driven - when you search or click a category, the URL updates. So bookmarks work, back button works, you can share links, all that good stuff.
 
-This means the browser's back/forward buttons work perfectly, and you can bookmark or share any view.
+## Tech Used (As Per Requirements)
 
-## Tech Stack
-
-- **Next.js 14** with App Router and TypeScript
-- **React Query 5** for server state and caching
-- **Zustand** for client state (just favorites!)
-- **Axios** for API calls
-- **SCSS Modules** for styling with a mobile-first approach
-- **Framer Motion** for animations
-- **Jest + React Testing Library** for tests
+- Next.js 14 (App Router + TypeScript)
+- React Query 5 for API calls
+- Zustand for state (though I barely used it - more on that below)
+- SCSS Modules
+- Framer Motion
+- Jest + React Testing Library
 
 ## Project Structure
 
-Here's what you'll find in the codebase:
+Quick overview of where things are:
 
-### Core Files
+```
+src/
+├── app/page.tsx              Main page that picks lobby/category/search view
+├── components/
+│   ├── game/GameCard/        Game card (has compact & full variants)
+│   ├── lobby/GameRow/        Horizontal scrolling rows
+│   ├── grid/CategoryGrid/    Full grid with infinite scroll
+│   └── ui/SearchBar/         Search input with debounce
+├── hooks/
+│   ├── useGames.ts           Infinite scroll query
+│   ├── useGameSearch.ts      Search API hook
+│   └── useInfiniteScroll.ts  IntersectionObserver wrapper
+└── store/useGameStore.ts     Just for favorites
+```
 
-- **`src/app/page.tsx`** — Main page that switches between lobby/category/search modes based on URL
-- **`src/app/layout.tsx`** — Root layout with React Query provider
-- **`src/store/useGameStore.ts`** — Zustand store (only handles favorites)
+## Key Decisions & Why
 
-### Components
+### URL Over Zustand
 
-- **`components/lobby/`** — LobbyView, GameRow, HeroBanner, ProviderRow
-- **`components/game/`** — GameCard (with compact/full variants) and GameCardSkeleton
-- **`components/grid/`** — CategoryGrid and SearchResultsGrid for full-page views
-- **`components/layout/`** — Header and CategoryNav
-- **`components/ui/`** — SearchBar, EmptyState, ErrorState
+I know the requirements said use Zustand for app state, but I went with URL params for search/category instead. Before you ask why - here's my thinking:
 
-### Hooks
+With Zustand I'd need:
 
-- **`useGames`** — Infinite scroll query for category grids
-- **`useGameSearch`** — Search endpoint query
-- **`useGameRow`** — Fetches 10 games for lobby rows
-- **`useInfiniteScroll`** — IntersectionObserver wrapper
+```typescript
+store.setSearchQuery("jack");
+store.setCategory("slots");
+// Then also sync the URL somehow
+```
 
-### Services
+With URL params:
 
-- **`gamesApi.ts`** — Axios client with typed functions for fetching games
+```typescript
+router.push("/?search=jack");
+// That's it
+```
 
-## Key Architecture Decisions
+Benefits:
 
-### Why URL-Driven?
+- Back button just works
+- Can share/bookmark any state
+- Way less code
+- No sync issues
 
-Instead of managing view state in Zustand or React state, the URL parameters tell the app what to show. This makes the code simpler and gives users a better experience (shareable links, working back button).
+I only used Zustand for favorited games since those need localStorage. Everything else is either in the URL or React Query's cache.
 
-### Zustand for Favorites Only
+### React Query Setup
 
-The store is intentionally minimal — it only manages favorites that need to persist to localStorage. Everything else (search query, selected category) comes from the URL. Server data stays in React Query's cache where it belongs.
+Each game row in the lobby is its own query. Yeah, more requests, but if one category breaks, the others still load. Seemed worth it.
 
-### Independent Queries Per Row
+For the grids, I'm using `useInfiniteQuery`. The API gives back a total count so I calculate next page like: `offset + count < total ? nextOffset : undefined`.
 
-Each GameRow in the lobby makes its own React Query request. This means if one category fails to load, the others still work. It's a bit more API calls, but the fault isolation is worth it.
+Cache times:
 
-### Mobile-First SCSS
+- Lobby rows: 5 min (games don't change much)
+- Search: 2 min
+- Grids: 1 min
 
-All styles use `min-width` media queries, starting from mobile and scaling up. Variables and mixins keep everything consistent.
+### Component Approach
 
-## API Integration
+GameCard has two modes instead of two components:
 
-**Base URL:** `https://jpapi-staging.jackpot.bet`
+- `variant="compact"` - lobby rows (just image + name)
+- `variant="full"` - grids (adds vendor, RTP%, fun mode badge)
 
-### Endpoints
+Keeps styling consistent and cuts down code duplication.
 
-**`GET /casino/games`**
+## How It Actually Works
 
-- Parameters: `limit`, `offset`, `sort`, `order`, `category`, `vendor[]`
-- Returns paginated game list with total count
+**Search:** Type in the search bar → debounces 300ms → updates URL → fires search API (if 2+ chars). Not doing infinite scroll here since the search endpoint doesn't paginate.
 
-**`GET /casino/games/search?query=`**
+**Categories:** Click a pill → URL changes to `/?category=slots` → CategoryGrid loads → useGames fetches with infinite scroll.
 
-- Searches games by name
-- Returns array of matching games
+**Infinite Scroll:** Watching a div at the bottom with IntersectionObserver. When you scroll near it, calls `fetchNextPage()`. Remember to clean up the observer!
 
-### Game Object
+**Favorites:** Heart icon → add/remove slug from Zustand → persists to localStorage.
 
-Each game has: `slug`, `name`, `vendor`, `thumbnail`, `thumbnailBlur`, `borderColor`, `categories`, `theoreticalPayOut`, `hasFunMode`, `favorite`, `featured`
+## API Stuff
 
-## Component Details
+Using `https://jpapi-staging.jackpot.bet`
 
-### GameCard
+Two endpoints:
 
-The workhorse component with two variants:
+- `/casino/games?limit=20&offset=0&category=VIDEOSLOTS`
+- `/casino/games/search?query=jack`
 
-- **Compact**: Used in lobby rows (shows name + thumbnail)
-- **Full**: Used in grids (adds vendor, RTP badge, FUN badge)
+Quick note: API wants uppercase categories (VIDEOSLOTS) but I'm using lowercase in URLs (slots) for cleaner links. Made a mapper to convert between them.
 
-### GameRow
-
-Horizontal scrolling row with arrow navigation on desktop. Each row independently fetches its category's games.
-
-### CategoryGrid / SearchResultsGrid
-
-Full-page grids with infinite scroll. As you scroll down, the IntersectionObserver triggers `fetchNextPage` from React Query.
-
-### SearchBar
-
-Debounces user input for 300ms, then updates the URL. Only fires search API calls when query is 2+ characters.
-
-## Testing
+## Tests
 
 ```bash
-# Run all tests
 yarn test
-
-# Watch mode
-yarn test:watch
-
-# Coverage report
-yarn test:coverage
 ```
 
-Current test coverage:
+Covered the main stuff:
 
-- **Store**: Tests for favorite toggling and persistence
-- **GameCard**: Variant rendering, badges, favorite interactions
-- **GameCardSkeleton**: Count rendering and variants
+- Zustand store (favorite toggle, persistence)
+- GameCard (both variants, badges, favorite button)
+- GameCardSkeleton (placeholder counts)
 
-## Development Commands
+Yeah, could've tested more (hooks, SearchBar) but ran out of time. Focused on the core state stuff first.
 
-```bash
-yarn dev              # Start dev server at localhost:3000
-yarn build            # Production build
-yarn start            # Start production server
-yarn lint             # Run ESLint
-yarn test             # Run tests
+## What's Missing
+
+If I had another day:
+
+- Vendor/provider filters (checkboxes on the side)
+- Sort options (RTP, popularity, name)
+- Favorites page
+- More tests
+- Better loading animations
+
+## Tricky Parts
+
+**Debounced search + URL:** Almost got into an infinite loop mess. Had to make sure the setTimeout cleanup ran properly when component unmounts or value changes.
+
+**React Query getNextPageParam:** Took me a sec to realize it wants `undefined` for "no more pages", not `null` or `false`.
+
+**Mobile scroll peek effect:** Getting that "2.5 cards visible" look on mobile was annoying. Ended up playing with container padding and negative margins till it looked right.
+
+## Why I Built It This Way
+
+Look, I know choosing URL params over Zustand might seem weird for an interview that specifically said "use Zustand for state". But here's the thing - the URL IS state. And it's better state because:
+
+Traditional approach:
+
+```typescript
+// In store
+setSearchQuery(value);
+setCategory(cat);
+clearFilters();
+// Then somehow keep URL in sync...
 ```
 
-## Known Limitations
+What I did:
 
-**What's Not Included:**
+```typescript
+router.push(`/?search=${value}`);
+const search = searchParams.get("search");
+// URL = source of truth
+```
 
-- Advanced filters (vendor selection, sorting options) — kept it simple for now
-- Hero banner carousel — currently just a static promotional image
-- Game launch functionality — cards aren't clickable yet
-- Authentication — Login/Register buttons are UI-only
-- Cross-tab sync for favorites — uses localStorage, doesn't sync across tabs
+Saves a bunch of code, makes the app more shareable, works better with SSR if you ever need it. The Zustand store I DID make is super minimal - just favorites. Keeps things focused.
 
-**Browser Support:**
+## Performance Notes
 
-- Modern browsers only (Chrome, Firefox, Safari, Edge)
-- Requires IntersectionObserver and CSS `aspect-ratio`
+- Next Image with blur placeholders (from API)
+- Only priority loading on first few images
+- React Query dedupes requests automatically
+- Native IntersectionObserver (no extra libs)
+- Independent queries per row (fault isolation)
 
-## What I Learned
+## Final Thoughts
 
-Building this was a great exercise in balancing simplicity with functionality. The URL-driven architecture was a game-changer — it made the code much cleaner than managing view state in a store. React Query's infinite scroll support is fantastic once you understand `getNextPageParam`. And keeping Zustand minimal (just favorites) prevented the common mistake of duplicating server data in client state.
+Tried to stick close to the Figma designs while keeping code maintainable. The URL-driven thing might be controversial but I think it's the right call here.
 
-The trickiest part was getting the debounced search to work smoothly with URL updates without causing infinite loops. The key was proper cleanup in the useEffect.
-
-## Future Improvements
-
-If I had more time, I'd add:
-
-- Vendor filtering in the grid views
-- Sort options (by RTP, by popularity, alphabetically)
-- Click-to-play functionality with game iframes
-- Wishlist/favorites view as a separate page
-- Animations when games enter/exit favorites
-- Better error handling (retry with exponential backoff)
-- E2E tests with Playwright
-
-## License
-
-This is a portfolio project — feel free to reference it, but please don't copy it wholesale.
-
-## Contact
-
-Built by **Jeyasurya** as a technical showcase. Questions or feedback? Open an issue!
+Questions? Lmk!
