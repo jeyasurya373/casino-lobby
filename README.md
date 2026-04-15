@@ -28,7 +28,7 @@ The whole thing is URL-driven - when you search or click a category, the URL upd
 
 ## Tech Used (As Per Requirements)
 
-- Next.js 14 (App Router + TypeScript)
+- Next.js 16 (App Router + TypeScript)
 - React Query 5 for API calls
 - Zustand for state (though I barely used it - more on that below)
 - SCSS Modules
