@@ -5,7 +5,7 @@ $bp-lg:  1024px;
 $bp-xl:  1440px;
 
 // Dark casino color palette (match Figma — dark navy/purple theme)
-$color-bg-primary:    #0e0e1a;
+$color-bg-primary:    #25222d;
 $color-bg-card:       #1a1a2e;
 $color-bg-surface:    #16213e;
 $color-bg-elevated:   #1e1e35;
@@ -26,11 +26,11 @@ $space-lg:  24px;
 $space-xl:  32px;
 $space-2xl: 48px;
 
-// Card dimensions
-$card-width-mobile:  130px;
-$card-width-tablet:  150px;
-$card-width-desktop: 170px;
-$card-aspect-ratio:  3/4;
+// Card dimensions (Figma specs)
+$card-width-mobile:  110px;  // Mobile: 110px × 146px
+$card-width-tablet:  140px;  // Tablet: intermediate size
+$card-width-desktop: 171px;  // Desktop: 171px × 227px
+$card-aspect-ratio:  110/146; // ~0.753 aspect ratio from Figma
 
 // Border radius
 $radius-sm:   4px;

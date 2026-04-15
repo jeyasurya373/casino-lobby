@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from "react";
 import { useGameRow } from "@/hooks/useGameRow";
 import { useGameStore } from "@/store/useGameStore";
 import GameCard from "@/components/game/GameCard/GameCard";
@@ -5,6 +6,7 @@ import GameCardSkeleton from "@/components/game/GameCardSkeleton/GameCardSkeleto
 import ErrorState from "@/components/ui/ErrorState/ErrorState";
 import type { GameCategory } from "@/types/game.types";
 import styles from "./GameRow.module.scss";
+import Image from "next/image";
 
 interface GameRowProps {
   title: string;
@@ -21,10 +23,10 @@ interface GameRowProps {
  *
  * Features:
  * - Fetches 10 games for the specified category
- * - Horizontal scroll with peek effect (2.5 cards on mobile, 6 on desktop)
+ * - Horizontal scroll with arrow navigation (desktop only)
  * - Loading skeleton state matching final card dimensions
  * - Error handling with retry functionality
- * - "View All" button to navigate to full grid view
+ * - "View All" button to navigate to full grid view via URL
  */
 export default function GameRow({
   title,
@@ -35,17 +37,61 @@ export default function GameRow({
   const { games, isLoading, isError } = useGameRow(category);
   const toggleFavorite = useGameStore((state) => state.toggleFavorite);
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Update scroll button states
+  const updateScrollButtons = () => {
+    if (!scrollContainerRef.current) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+    setCanScrollLeft(scrollLeft > 0);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener("scroll", updateScrollButtons);
+      window.addEventListener("resize", updateScrollButtons);
+      return () => {
+        container.removeEventListener("scroll", updateScrollButtons);
+        window.removeEventListener("resize", updateScrollButtons);
+      };
+    }
+  }, [games]);
+
+  const scrollLeft = () => {
+    scrollContainerRef.current?.scrollBy({ left: -300, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    scrollContainerRef.current?.scrollBy({ left: 300, behavior: "smooth" });
+  };
+
   // Loading state
   if (isLoading) {
     return (
       <section className={styles.gameRow}>
         <div className={styles.header}>
           <h2 className={styles.title}>
-            {icon && <span className={styles.icon}>{icon}</span>}
+            {icon && (
+              <Image
+                src={icon}
+                alt="icons"
+                width={20}
+                height={20}
+                className={styles.icon}
+                priority
+              />
+            )}
+
             {title}
           </h2>
         </div>
-        <div className={styles.cardsContainer}>
+        <div className={styles.cardsContainer} ref={scrollContainerRef}>
           <GameCardSkeleton variant="compact" count={6} />
         </div>
       </section>
@@ -58,7 +104,16 @@ export default function GameRow({
       <section className={styles.gameRow}>
         <div className={styles.header}>
           <h2 className={styles.title}>
-            {icon && <span className={styles.icon}>{icon}</span>}
+            {icon && (
+              <Image
+                src={icon}
+                alt="icons"
+                width={20}
+                height={20}
+                className={styles.icon}
+                priority
+              />
+            )}
             {title}
           </h2>
         </div>
@@ -75,15 +130,42 @@ export default function GameRow({
     <section className={styles.gameRow}>
       <div className={styles.header}>
         <h2 className={styles.title}>
-          {icon && <span className={styles.icon}>{icon}</span>}
+          {icon && (
+            <Image
+              src={icon}
+              alt="icons"
+              width={20}
+              height={20}
+              className={styles.icon}
+              priority
+            />
+          )}
           {title}
         </h2>
-        <button className={styles.viewAllButton} onClick={onViewAll}>
-          View All →
-        </button>
+        <div className={styles.headerActions}>
+          <button className={styles.viewAllButton} onClick={onViewAll}>
+            View All
+          </button>
+          <button
+            className={styles.arrowBtn}
+            onClick={scrollLeft}
+            disabled={!canScrollLeft}
+            aria-label="Scroll left"
+          >
+            ‹
+          </button>
+          <button
+            className={styles.arrowBtn}
+            onClick={scrollRight}
+            disabled={!canScrollRight}
+            aria-label="Scroll right"
+          >
+            ›
+          </button>
+        </div>
       </div>
 
-      <div className={styles.cardsContainer}>
+      <div className={styles.cardsContainer} ref={scrollContainerRef}>
         {games.map((game, index) => (
           <GameCard
             key={game.slug}

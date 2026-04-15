@@ -1,0 +1,70 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.container {
+  // No padding - content fills available space
+}
+
+.grid {
+  display: grid;
+  gap: $space-md;
+  width: 100%;
+  justify-content: center;
+  justify-items: center;
+
+  // Use fixed card widths to match lobby cards
+  grid-template-columns: repeat(auto-fill, minmax($card-width-mobile, $card-width-mobile));
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(auto-fill, minmax($card-width-tablet, $card-width-tablet));
+    gap: $space-lg;
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(auto-fill, minmax($card-width-desktop, $card-width-desktop));
+  }
+
+  @include respond-to(xl) {
+    gap: $space-xl;
+  }
+
+  // Ensure grid items don't exceed card width
+  > * {
+    max-width: $card-width-mobile;
+
+    @include respond-to(md) {
+      max-width: $card-width-tablet;
+    }
+
+    @include respond-to(lg) {
+      max-width: $card-width-desktop;
+    }
+  }
+}
+
+// Infinite scroll sentinel
+.sentinel {
+  height: 1px;
+  width: 100%;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+// End of results message
+.endMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $space-xl;
+  margin-top: $space-lg;
+
+  p {
+    color: $color-text-muted;
+    font-size: 14px;
+    margin: 0;
+
+    @include respond-to(md) {
+      font-size: 15px;
+    }
+  }
+}

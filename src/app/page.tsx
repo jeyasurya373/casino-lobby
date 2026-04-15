@@ -1,71 +1,53 @@
 "use client";
 
-import { useGameStore } from "@/store/useGameStore";
+import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header/Header";
 import CategoryNav from "@/components/layout/CategoryNav/CategoryNav";
 import HeroBanner from "@/components/lobby/HeroBanner/HeroBanner";
-import GameRow from "@/components/lobby/GameRow/GameRow";
-import ProviderRow from "@/components/lobby/ProviderRow/ProviderRow";
-import GameGrid from "@/components/grid/GameGrid/GameGrid";
-import FilterPanel from "@/components/grid/FilterPanel/FilterPanel";
-import SortBar from "@/components/grid/SortBar/SortBar";
-import { useGames } from "@/hooks/useGames";
+import SearchBar from "@/components/ui/SearchBar/SearchBar";
+import LobbyView from "@/components/lobby/LobbyView/LobbyView";
+import SearchResultsGrid from "@/components/grid/SearchResultsGrid/SearchResultsGrid";
+import CategoryGrid from "@/components/grid/CategoryGrid/CategoryGrid";
 import styles from "./page.module.scss";
 
+/**
+ * Main Page Component
+ *
+ * URL-driven architecture matching production jackpot.bet:
+ * - /                        → lobby mode, all rows visible
+ * - /?search=blackjack      → search mode, flat grid of results
+ * - /?category=ORIGINAL     → category mode, flat grid filtered
+ *
+ * URL params are the single source of truth.
+ * Always shows: Header, HeroBanner, SearchBar, CategoryNav
+ * Content area switches based on URL params.
+ */
 export default function Home() {
-  const viewMode = useGameStore((state) => state.viewMode);
-  const openGridView = useGameStore((state) => state.openGridView);
-  const { games } = useGames();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") ?? "";
+  const category = searchParams.get("category") ?? "";
+
+  // Determine mode based on URL params
+  // When both exist, search takes precedence (search within category)
+  const mode = search ? "search" : category ? "category" : "lobby";
 
   return (
     <div className={styles.page}>
       <Header />
-      <CategoryNav />
+      <HeroBanner />
 
-      {/* Lobby View */}
-      {viewMode === "lobby" && (
-        <main className={styles.lobby}>
-          <HeroBanner />
-          <GameRow
-            title="Featured Games"
-            category="VIDEOSLOTS"
-            icon="⭐"
-            onViewAll={() => openGridView("VIDEOSLOTS")}
-          />
-          <ProviderRow />
-          <GameRow
-            title="Slots"
-            category="VIDEOSLOTS"
-            icon="🎰"
-            onViewAll={() => openGridView("VIDEOSLOTS")}
-          />
-          <GameRow
-            title="Table Games"
-            category="TABLEGAMES"
-            icon="♠️"
-            onViewAll={() => openGridView("TABLEGAMES")}
-          />
-          <GameRow
-            title="Blackjack"
-            category="BLACKJACK"
-            icon="🃏"
-            onViewAll={() => openGridView("BLACKJACK")}
-          />
-        </main>
-      )}
+      <div className={styles.searchBarRow}>
+        <SearchBar />
+      </div>
 
-      {/* Grid View */}
-      {(viewMode === "grid" || viewMode === "search") && (
-        <main className={styles.gridView}>
-          <div className={styles.sidebar}>
-            <FilterPanel />
-          </div>
-          <div className={styles.gridContent}>
-            <SortBar resultCount={games.length} />
-            <GameGrid />
-          </div>
-        </main>
+      <CategoryNav activeCategory={category} />
+
+      {/* Content area - switches based on URL */}
+      {mode === "lobby" && <LobbyView />}
+      {mode === "search" && (
+        <SearchResultsGrid query={search} category={category} />
       )}
+      {mode === "category" && <CategoryGrid category={category} />}
     </div>
   );
 }

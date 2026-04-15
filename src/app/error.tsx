@@ -24,7 +24,7 @@ export default function Error({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#0e0e1a",
+        backgroundColor: "#25222d",
       }}
     >
       <ErrorState

@@ -3,6 +3,7 @@
 
 .gameRow {
   margin-bottom: $space-xl;
+  position: relative;
 }
 
 // Section header
@@ -14,7 +15,7 @@
   padding: 0 $space-md;
 
   @include respond-to(md) {
-    padding: 0 $space-lg;
+    padding: 0 $space-xl;
   }
 }
 
@@ -22,35 +23,44 @@
   display: flex;
   align-items: center;
   gap: $space-sm;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: $color-text-primary;
   margin: 0;
 
   @include respond-to(md) {
-    font-size: 24px;
+    font-size: 22px;
   }
 }
 
 .icon {
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1;
 
   @include respond-to(md) {
-    font-size: 28px;
+    font-size: 26px;
   }
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
 .viewAllButton {
-  color: $color-accent-gold;
+  color: $color-text-secondary;
   font-size: 14px;
   font-weight: 600;
   transition: color $transition-fast, transform $transition-fast;
   padding: $space-xs $space-sm;
   border-radius: $radius-md;
+  width: 100px;
+  height: 30px;
+  background: $color-bg-elevated;
 
   &:hover {
-    color: lighten($color-accent-gold, 10%);
+    color: $color-text-primary;
     transform: translateX(2px);
   }
 
@@ -63,38 +73,73 @@
   }
 }
 
+.arrowBtn {
+  display: none;
+  width: 32px;
+  height: 32px;
+  background: $color-bg-elevated;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  color: $color-text-muted;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: color $transition-fast, background-color $transition-fast;
+  font-size: 20px;
+  line-height: 1;
+  
+  &:hover:not(:disabled) {
+    color: $color-text-primary;
+    background-color: lighten($color-bg-elevated, 5%);
+  }
+  
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  @include respond-to(md) {
+    display: flex;
+  }
+}
+
 // Horizontal scrolling cards container
 .cardsContainer {
   @include horizontal-scroll-row;
   gap: $space-sm;
   padding: 0 $space-md;
   scroll-padding: $space-md;
-
-  // Mobile: Show 2.5 cards for peek effect
-  // 2.5 cards * 130px + 2 gaps * 8px = 341px
-  max-width: calc((#{$card-width-mobile} * 2.5) + (#{$space-sm} * 2));
+  position: relative;
+  
+  // Remove max-width - show cards till the end, then hide overflow
+  // This provides better UI by utilizing available space
 
   @include respond-to(md) {
-    padding: 0 $space-lg;
-    scroll-padding: $space-lg;
-    // Tablet: Show 4 cards
-    // 4 cards * 150px + 3 gaps * 8px = 624px
-    max-width: calc((#{$card-width-tablet} * 4) + (#{$space-sm} * 3));
+    padding: 0 $space-xl;
+    scroll-padding: $space-xl;
+    gap: $space-md; // Larger gap on desktop
   }
 
-  @include respond-to(lg) {
-    // Desktop: Show 6 cards
-    // 6 cards * 170px + 5 gaps * 8px = 1060px
-    max-width: calc((#{$card-width-desktop} * 6) + (#{$space-sm} * 5));
-  }
-
-  @include respond-to(xl) {
-    // Large desktop: Show all cards if possible
-    max-width: 100%;
-  }
-
-  // Snap to cards when scrolling
+  // Snap to cards when scrolling on mobile
   > * {
     scroll-snap-align: start;
+  }
+
+  // Right-side gradient fade overlay for scroll indication
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 80px;
+    background: linear-gradient(to right, transparent, $color-bg-primary);
+    pointer-events: none;
+    z-index: $z-card-hover;
+
+    @include respond-to(md) {
+      width: 120px;
+      right: 0;
+    }
   }
 }

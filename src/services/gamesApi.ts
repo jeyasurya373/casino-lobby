@@ -103,7 +103,7 @@ export async function fetchGames(params: GamesApiParams): Promise<{
     }
 
     return {
-      items: response.data.data.items,
+      items: response.data.data.items ?? [],
       total: response.data.data.total,
       count: response.data.data.count,
     };
@@ -145,7 +145,7 @@ export async function fetchGameSearch(query: string): Promise<Game[]> {
       throw new ApiError("Search request failed", response.status);
     }
 
-    return response.data.data.items;
+    return response.data.data.items ?? [];
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;

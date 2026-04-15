@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchGames } from "@/services/gamesApi";
+import { toApiCategory } from "@/utils/categoryMapper";
 import type { GameCategory } from "@/types/game.types";
 
 /**
@@ -11,9 +12,11 @@ import type { GameCategory } from "@/types/game.types";
  * @returns Query result with games array and status flags
  */
 export function useGameRow(category: GameCategory) {
+  const apiCategory = toApiCategory(category);
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["gameRow", category],
-    queryFn: () => fetchGames({ category, limit: 10, offset: 0 }),
+    queryFn: () => fetchGames({ category: apiCategory, limit: 10, offset: 0 }),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 

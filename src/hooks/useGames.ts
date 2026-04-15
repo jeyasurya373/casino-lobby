@@ -1,37 +1,31 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchGames } from "@/services/gamesApi";
-import { useGameStore } from "@/store/useGameStore";
-import type { Game } from "@/types/game.types";
+import { toApiCategory } from "@/utils/categoryMapper";
+import type { Game, GameCategory } from "@/types/game.types";
+
+interface UseGamesOptions {
+  category?: GameCategory;
+}
 
 /**
  * Infinite scroll query for the full grid view.
  * Fetches pages of 20 games, accumulates on scroll.
+ * Accepts category as parameter instead of reading from store.
  *
- * Reads filter state from the game store and constructs
- * the appropriate query parameters.
- *
+ * @param options - Query options including category filter
  * @returns Infinite query result with flattened games array and pagination controls
  */
-export function useGames() {
-  const selectedCategory = useGameStore((state) => state.selectedCategory);
-  const selectedVendors = useGameStore((state) => state.selectedVendors);
-  const sortField = useGameStore((state) => state.sortField);
-  const sortOrder = useGameStore((state) => state.sortOrder);
+export function useGames(options: UseGamesOptions = {}) {
+  const { category } = options;
+  const apiCategory = toApiCategory(category);
 
   const query = useInfiniteQuery({
-    queryKey: [
-      "games",
-      selectedCategory,
-      selectedVendors,
-      sortField,
-      sortOrder,
-    ],
+    queryKey: ["games", category],
     queryFn: ({ pageParam = 0 }) =>
       fetchGames({
-        category: selectedCategory ?? undefined,
-        vendor: selectedVendors.length > 0 ? selectedVendors : undefined,
-        sort: sortField,
-        order: sortOrder,
+        category: apiCategory,
+        sort: "featuredPriority",
+        order: "desc",
         limit: 20,
         offset: pageParam,
       }),

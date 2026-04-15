@@ -6,13 +6,10 @@ describe("useGameStore", () => {
     // Reset store state before each test
     const { result } = renderHook(() => useGameStore());
     act(() => {
-      result.current.clearFilters();
-      // Clear favorites
+      // Clear all favorites
       result.current.favorites.forEach((slug) => {
         result.current.toggleFavorite(slug);
       });
-      // Reset view mode
-      result.current.setViewMode("lobby");
     });
   });
 
@@ -46,6 +43,31 @@ describe("useGameStore", () => {
       expect(result.current.favorites).not.toContain("test-game-slug");
       expect(result.current.isFavorite("test-game-slug")).toBe(false);
     });
+
+    it("can toggle multiple favorites independently", () => {
+      const { result } = renderHook(() => useGameStore());
+
+      act(() => {
+        result.current.toggleFavorite("game-1");
+        result.current.toggleFavorite("game-2");
+        result.current.toggleFavorite("game-3");
+      });
+
+      expect(result.current.favorites).toHaveLength(3);
+      expect(result.current.favorites).toEqual(
+        expect.arrayContaining(["game-1", "game-2", "game-3"]),
+      );
+
+      // Remove one
+      act(() => {
+        result.current.toggleFavorite("game-2");
+      });
+
+      expect(result.current.favorites).toHaveLength(2);
+      expect(result.current.favorites).toEqual(
+        expect.arrayContaining(["game-1", "game-3"]),
+      );
+    });
   });
 
   describe("isFavorite", () => {
@@ -59,62 +81,26 @@ describe("useGameStore", () => {
       expect(result.current.isFavorite("favorite-game")).toBe(true);
       expect(result.current.isFavorite("non-favorite-game")).toBe(false);
     });
-  });
 
-  describe("clearFilters", () => {
-    it("resets selectedVendors to [] and selectedCategory to null", () => {
+    it("returns false for empty string", () => {
       const { result } = renderHook(() => useGameStore());
 
-      // Set some filters
-      act(() => {
-        result.current.toggleVendor("PragmaticPlay");
-        result.current.toggleVendor("EvolutionGaming");
-        result.current.setCategory("VIDEOSLOTS");
-        result.current.setSortField("name");
-        result.current.setSortOrder("asc");
-      });
-
-      expect(result.current.selectedVendors).toHaveLength(2);
-      expect(result.current.selectedCategory).toBe("VIDEOSLOTS");
-
-      // Clear filters
-      act(() => {
-        result.current.clearFilters();
-      });
-
-      expect(result.current.selectedVendors).toEqual([]);
-      expect(result.current.selectedCategory).toBeNull();
-      expect(result.current.sortField).toBe("featuredPriority");
-      expect(result.current.sortOrder).toBe("desc");
+      expect(result.current.isFavorite("")).toBe(false);
     });
   });
 
-  describe("openGridView", () => {
-    it("sets viewMode to grid and optionally sets selectedCategory", () => {
+  describe("persistence", () => {
+    it("persists favorites to localStorage", () => {
       const { result } = renderHook(() => useGameStore());
 
       act(() => {
-        result.current.openGridView("BLACKJACK");
+        result.current.toggleFavorite("persisted-game");
       });
 
-      expect(result.current.viewMode).toBe("grid");
-      expect(result.current.selectedCategory).toBe("BLACKJACK");
-    });
+      // Create a new hook instance to simulate page reload
+      const { result: newResult } = renderHook(() => useGameStore());
 
-    it("sets viewMode to grid without setting category if not provided", () => {
-      const { result } = renderHook(() => useGameStore());
-
-      // Set a category first
-      act(() => {
-        result.current.setCategory("VIDEOSLOTS");
-      });
-
-      act(() => {
-        result.current.openGridView();
-      });
-
-      expect(result.current.viewMode).toBe("grid");
-      expect(result.current.selectedCategory).toBeNull();
+      expect(newResult.current.favorites).toContain("persisted-game");
     });
   });
 });

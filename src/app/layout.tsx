@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Casino Lobby - Play Your Favorite Games</title>
+        <title>Jackpot.bet | Jeyasurya </title>
         <meta
           name="description"
           content="Explore our extensive casino lobby featuring slots, table games, live dealers, and more. Play now and win big!"

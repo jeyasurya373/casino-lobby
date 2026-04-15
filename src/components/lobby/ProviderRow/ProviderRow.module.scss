@@ -35,8 +35,8 @@
   align-items: center;
   justify-content: center;
   gap: $space-sm;
-  width: 140px;
-  height: 120px;
+  width: 160px;
+  height: 100px;
   background-color: $color-bg-card;
   border: 1px solid $color-border;
   border-radius: $radius-lg;
@@ -49,9 +49,9 @@
     box-shadow: 0 8px 24px rgba($color-accent-gold, 0.2);
   }
 
-  @include respond-to(md) {
+  @include respond-to(lg) {
     width: 160px;
-    height: 140px;
+    height: 160px;
   }
 }
 

@@ -6,11 +6,10 @@
   top: 0;
   z-index: $z-header;
   background-color: $color-bg-primary;
-  border-bottom: 1px solid $color-border;
   width: 100%;
 }
 
-.topRow {
+.container {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -18,7 +17,8 @@
   gap: $space-md;
 
   @include respond-to(md) {
-    padding: $space-md $space-lg;
+    padding: $space-md $space-xl;
+    gap: $space-lg;
   }
 }
 
@@ -26,46 +26,62 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: $space-sm;
-  font-weight: 700;
-  font-size: 16px;
-  color: $color-text-primary;
-  white-space: nowrap;
-
+  position: relative;
+  height: 40px;
+  
   @include respond-to(md) {
-    font-size: 20px;
+    height: 40px;
   }
 }
 
-.logoIcon {
-  font-size: 24px;
-  line-height: 1;
-
-  @include respond-to(md) {
-    font-size: 28px;
-  }
-}
-
-.logoText {
-  letter-spacing: 1px;
-}
-
-// Search Bar
-.searchDesktop {
-  display: none;
-
-  @include respond-to(md) {
-    display: block;
-    flex: 1;
-    max-width: 500px;
-  }
-}
-
-.searchMobile {
-  padding: 0 $space-md $space-md;
-
+// Mobile logo - visible on small screens
+.logoMobile {
+  display: block;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  
   @include respond-to(md) {
     display: none;
+  }
+}
+
+// Desktop logo - visible on larger screens
+.logoDesktop {
+  display: none;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  
+  @include respond-to(md) {
+    display: block;
+  }
+}
+
+// Icon Buttons (Search, Chat)
+.iconButtons {
+  display: none;
+  gap: $space-sm;
+  
+  @include respond-to(md) {
+    display: flex;
+  }
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-muted;
+  border-radius: $radius-md;
+  transition: color $transition-fast, background-color $transition-fast;
+  
+  &:hover {
+    color: $color-text-primary;
+    background-color: $color-bg-elevated;
   }
 }
 
@@ -74,17 +90,21 @@
   display: flex;
   gap: $space-sm;
   align-items: center;
+  margin-left: auto;
 }
 
 .loginButton {
   padding: $space-xs $space-md;
   color: $color-text-primary;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  transition: color $transition-fast;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  transition: border-color $transition-fast, color $transition-fast;
 
   &:hover {
-    color: $color-accent-gold;
+    border-color: $color-text-muted;
+    color: $color-text-primary;
   }
 
   @include respond-to(md) {
@@ -95,15 +115,15 @@
 
 .registerButton {
   padding: $space-xs $space-md;
-  background-color: $color-accent-gold;
-  color: $color-bg-primary;
-  font-size: 14px;
+  background-color: $color-accent-purple;
+  color: $color-text-primary;
+  font-size: 13px;
   font-weight: 700;
   border-radius: $radius-md;
   transition: background-color $transition-fast, transform $transition-fast;
 
   &:hover {
-    background-color: lighten($color-accent-gold, 10%);
+    background-color: lighten($color-accent-purple, 10%);
     transform: translateY(-1px);
   }
 

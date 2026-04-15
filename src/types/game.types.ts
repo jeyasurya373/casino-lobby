@@ -2,13 +2,15 @@
  * Valid game category types
  */
 export type GameCategory =
-  | "VIDEOSLOTS"
-  | "BLACKJACK"
-  | "BACCARAT"
-  | "GAMESHOWSLIVEDEALER"
-  | "ORIGINAL"
-  | "TABLEGAMES"
-  | "LIVEDEALER";
+  | "slots"
+  | "blackjack"
+  | "baccarat"
+  | "live-casino"
+  | "original"
+  | "table"
+  | "live-dealer"
+  | "new"
+  | "popular";
 
 /**
  * Supported game vendors
@@ -35,11 +37,6 @@ export type SortField =
  * Sort order direction
  */
 export type SortOrder = "asc" | "desc";
-
-/**
- * Display mode for game views
- */
-export type ViewMode = "lobby" | "grid" | "search";
 
 /**
  * Represents a casino game from the API
@@ -91,7 +88,7 @@ export interface GamesApiParams {
   offset?: number;
   sort?: SortField;
   order?: SortOrder;
-  category?: GameCategory;
+  category?: string; // API uses uppercase strings (VIDEOSLOTS, ORIGINAL, etc.)
   vendor?: GameVendor[];
   excludeCategory?: string;
 }

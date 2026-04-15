@@ -2,9 +2,9 @@
 @use '../../../styles/mixins' as *;
 
 .categoryNav {
-  background-color: $color-bg-card;
-  border-bottom: 1px solid $color-border;
-  padding: $space-sm 0;
+  background-color: $color-bg-primary;
+  
+  padding: $space-md 0;
 
   @include respond-to(md) {
     padding: $space-md 0;
@@ -15,42 +15,52 @@
   @include horizontal-scroll-row;
   gap: $space-sm;
   padding: 0 $space-md;
+  flex-wrap: nowrap;
 
   @include respond-to(md) {
-    padding: 0 $space-lg;
-    justify-content: center;
-  }
-
-  @include respond-to(lg) {
-    flex-wrap: wrap;
+    padding: 0 $space-xl;
   }
 }
 
-.tab {
-  padding: $space-sm $space-lg;
+.pill {
+  padding: 0 $space-lg;
+  height: 32px;
   background-color: transparent;
-  border: 1px solid transparent;
-  border-radius: $radius-full;
-  color: $color-text-secondary;
-  font-size: 14px;
+  border: 1px solid $color-border;
+  border-radius: 6px;
+  color: $color-text-muted;
+  font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
   transition: all $transition-fast;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
 
   &:hover {
     color: $color-text-primary;
-    background-color: rgba($color-accent-gold, 0.1);
-    border-color: rgba($color-accent-gold, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
   }
 
   &.active {
-    background-color: $color-accent-gold;
-    color: $color-bg-primary;
-    border-color: $color-accent-gold;
+    background-color: $color-accent-purple;
+    color: white;
+  
+  }
+
+  &.feelingLucky {
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   @include respond-to(md) {
-    font-size: 15px;
+    font-size: 14px;
   }
+}
+
+.clearIcon {
+  font-size: 10px;
+  opacity: 0.8;
 }

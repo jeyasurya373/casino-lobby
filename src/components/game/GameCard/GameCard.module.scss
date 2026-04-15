@@ -9,8 +9,8 @@
   border-radius: $radius-lg;
   overflow: hidden;
   cursor: pointer;
-  transition: transform $transition-normal, box-shadow $transition-normal;
-  border: 1px solid $color-border;
+  transition: transform $transition-normal, box-shadow $transition-normal, border-color $transition-normal;
+  border: 2px solid var(--border-color, #{$color-border});
 
   // Custom property for dynamic border color
   &:hover {

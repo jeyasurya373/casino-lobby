@@ -1,60 +1,65 @@
-import { useEffect, useRef } from "react";
-import { useGameStore } from "@/store/useGameStore";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./SearchBar.module.scss";
 
 /**
  * SearchBar Component
  *
- * Implements a debounced search input for game filtering.
+ * URL-driven search input with debouncing.
+ * Updates URL params after 300ms of inactivity.
  *
- * Debounce Strategy:
- * - Updates searchQuery immediately for instant UI feedback
- * - Debounces debouncedQuery by 300ms before triggering API calls
- * - Uses custom useEffect-based debounce (no external library)
- * - Cleanup on unmount prevents stale API calls
- *
- * Auto-switching:
- * - Switches to 'search' viewMode on focus (if in 'lobby')
- * - Returns to 'lobby' viewMode when cleared
+ * Navigation patterns:
+ * - User types "jack" → URL becomes /?search=jack (after 300ms)
+ * - User clears search → URL becomes /
+ * - Escape key → clears search and returns to lobby
  */
 export default function SearchBar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const searchQuery = useGameStore((state) => state.searchQuery);
-  const viewMode = useGameStore((state) => state.viewMode);
-  const setSearchQuery = useGameStore((state) => state.setSearchQuery);
-  const setDebouncedQuery = useGameStore((state) => state.setDebouncedQuery);
-  const setViewMode = useGameStore((state) => state.setViewMode);
+  // Initialize from URL
+  const [value, setValue] = useState(searchParams.get("search") ?? "");
 
-  // Debounce implementation - updates debouncedQuery 300ms after user stops typing
+  // Debounce: push to URL 300ms after user stops typing
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
+    const timer = setTimeout(() => {
+      const category = searchParams.get("category");
+
+      if (value.length >= 2) {
+        // Preserve category if present
+        const params = new URLSearchParams();
+        params.set("search", value);
+        if (category) params.set("category", category);
+        router.push(`/?${params.toString()}`);
+      } else if (value.length === 0 && searchParams.get("search")) {
+        // Clear search but preserve category
+        if (category) {
+          router.push(`/?category=${encodeURIComponent(category)}`);
+        } else {
+          router.push("/");
+        }
+      }
     }, 300);
 
-    // Cleanup: cancel pending debounce on new input or unmount
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [searchQuery, setDebouncedQuery]);
+    return () => clearTimeout(timer);
+  }, [value, router, searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Update immediately for UI responsiveness
-    setSearchQuery(e.target.value);
-  };
-
-  const handleFocus = () => {
-    // Switch to search view when user starts searching
-    if (viewMode === "lobby") {
-      setViewMode("search");
-    }
+    setValue(e.target.value);
   };
 
   const handleClear = () => {
-    // Reset all search-related state
-    setSearchQuery("");
-    setDebouncedQuery("");
-    setViewMode("lobby");
+    setValue("");
+    const category = searchParams.get("category");
+    // Clear search but preserve category
+    if (category) {
+      router.push(`/?category=${encodeURIComponent(category)}`);
+    } else {
+      router.push("/");
+    }
     inputRef.current?.focus();
   };
 
@@ -67,50 +72,51 @@ export default function SearchBar() {
   };
 
   return (
-    <div className={styles.searchBar}>
-      {/* Search Icon */}
-      <svg
-        className={styles.searchIcon}
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <path
-          d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-
-      {/* Search Input */}
-      <input
-        ref={inputRef}
-        type="text"
-        className={styles.input}
-        placeholder="Search games..."
-        value={searchQuery}
-        onChange={handleChange}
-        onFocus={handleFocus}
-        onKeyDown={handleKeyDown}
-        aria-label="Search games"
-      />
-
-      {/* Clear Button */}
-      {searchQuery && (
-        <button
-          className={styles.clearButton}
-          onClick={handleClear}
-          aria-label="Clear search"
-          type="button"
+    <div className={styles.wrapper}>
+      <div className={styles.searchBar}>
+        {/* Search Icon */}
+        <svg
+          className={styles.searchIcon}
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
-          ×
-        </button>
-      )}
+          <path
+            d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+
+        {/* Search Input */}
+        <input
+          ref={inputRef}
+          type="text"
+          className={styles.input}
+          placeholder="Search a Games..."
+          value={value}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          aria-label="Search games"
+        />
+
+        {/* Clear Button */}
+        {value && (
+          <button
+            className={styles.clearButton}
+            onClick={handleClear}
+            aria-label="Clear search"
+            type="button"
+          >
+            ×
+          </button>
+        )}
+      </div>
     </div>
   );
 }
