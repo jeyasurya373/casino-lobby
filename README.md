@@ -1,4 +1,4 @@
-# Casino Lobby - Interview Challenge
+# Casino Lobby
 
 Hey! This is what I built for the Next.js frontend challenge. It's a casino game browser where you can search games, filter by category, and scroll through results.
 
